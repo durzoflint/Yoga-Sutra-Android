@@ -3,7 +3,9 @@ package com.durzoflint.patanjaliyogasutras;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,39 +17,59 @@ import java.nio.charset.StandardCharsets;
 
 import static com.durzoflint.patanjaliyogasutras.ChapterActivity.CHAPTER;
 
-public class SutraActivity extends AppCompatActivity {
-    int chapter;
+public class SutraActivity extends AppCompatActivity implements View.OnClickListener {
+    JSONArray chapter;
+    int chapterNumber, verseNumber, chapterLength;
+    TextView one, two, three;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sutra);
 
-        chapter = getIntent().getIntExtra(CHAPTER, 0);
-        Toast.makeText(this, chapter, Toast.LENGTH_SHORT).show();
+        chapterNumber = getIntent().getIntExtra(CHAPTER, 0);
+
+        setTitle("Chapter " + chapterNumber);
+
+        ImageView next = findViewById(R.id.next);
+        next.setOnClickListener(this);
+        ImageView previous = findViewById(R.id.previous);
+        previous.setOnClickListener(this);
+        ImageView playPause = findViewById(R.id.play_pause);
+        playPause.setOnClickListener(this);
+
+        one = findViewById(R.id.one);
+        two = findViewById(R.id.two);
+        three = findViewById(R.id.three);
+
+        load();
+        attachView();
     }
 
-    void test() {
+    void attachView() {
         try {
-            int c = 0;
-            JSONObject obj = new JSONObject(loadJSONFromAsset());
-            JSONArray m_jArry = obj.getJSONArray("chapters");
-            for (int i = 0; i < m_jArry.length(); i++) {
-                JSONObject jo_inside = m_jArry.getJSONObject(i);
-                JSONArray chapterTemp = jo_inside.getJSONArray("chapter " + (i + 1));
+            JSONObject verse = chapter.getJSONObject(verseNumber);
 
-                for (int j = 0; j < chapterTemp.length(); j++) {
-                    JSONObject verseTemp = chapterTemp.getJSONObject(j);
-
-                    String verse = verseTemp.getString("verse");
-                    c++;
-                    Log.d("Abhinav: " + i + ":" + j, "<" + verse + ">");
-                }
-            }
-            Log.d("Abhinav", "total: " + c);
-
+            one.setText(verse.getString("verse"));
+            two.setText(verse.getString("translation"));
+            three.setText(verse.getString("meaning"));
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e("SutraActivity", e.getMessage());
+        }
+    }
+
+    void load() {
+        verseNumber = 0;
+        try {
+            JSONObject jsonObject = new JSONObject(loadJSONFromAsset());
+            JSONArray chapters = jsonObject.getJSONArray("chapters");
+            JSONObject chapterJSONObject = chapters.getJSONObject(chapterNumber - 1);
+            chapter = chapterJSONObject.getJSONArray("chapter " + chapterNumber);
+            chapterLength = chapter.length();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SutraActivity", e.getMessage());
         }
     }
 
@@ -65,5 +87,26 @@ public class SutraActivity extends AppCompatActivity {
             return null;
         }
         return json;
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.next:
+                if (verseNumber < chapterLength) {
+                    verseNumber++;
+                    attachView();
+                }
+                break;
+            case R.id.previous:
+                if (verseNumber > 0) {
+                    verseNumber--;
+                    attachView();
+                }
+                break;
+            case R.id.play_pause:
+                break;
+        }
     }
 }
