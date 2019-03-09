@@ -1,8 +1,9 @@
 package com.durzoflint.patanjaliyogasutras;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,14 +11,23 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
-public class MainActivity extends AppCompatActivity {
+import static com.durzoflint.patanjaliyogasutras.ChapterActivity.CHAPTER;
+
+public class SutraActivity extends AppCompatActivity {
+    int chapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_sutra);
 
+        chapter = getIntent().getIntExtra(CHAPTER, 0);
+        Toast.makeText(this, chapter, Toast.LENGTH_SHORT).show();
+    }
+
+    void test() {
         try {
             int c = 0;
             JSONObject obj = new JSONObject(loadJSONFromAsset());
@@ -41,10 +51,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void test() {
-
-    }
-
     String loadJSONFromAsset() {
         String json;
         try {
@@ -53,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            json = new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
