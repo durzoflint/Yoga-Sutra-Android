@@ -78,7 +78,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:gravity="center"
-                android:text="One" />
+                android:text="One"
+                android:textColor="@android:color/white" />
 
             <TextView
                 android:id="@+id/two"
@@ -86,7 +87,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:gravity="center"
-                android:text="Two" />
+                android:text="Two"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -102,7 +104,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:gravity="center"
-                android:text="Three" />
+                android:text="Three"
+                android:textColor="@android:color/white" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
