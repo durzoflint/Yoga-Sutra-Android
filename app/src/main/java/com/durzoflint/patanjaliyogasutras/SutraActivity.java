@@ -29,7 +29,7 @@ public class SutraActivity extends AppCompatActivity implements View.OnClickList
 
         chapterNumber = getIntent().getIntExtra(CHAPTER, 0);
 
-        setTitle("Chapter " + chapterNumber);
+        //setTitle("Chapter " + chapterNumber);
 
         ImageView next = findViewById(R.id.next);
         next.setOnClickListener(this);
