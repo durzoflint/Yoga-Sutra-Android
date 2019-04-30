@@ -34,8 +34,8 @@ public class SutraActivity extends AppCompatActivity implements View.OnClickList
 
         chapterNumber = getIntent().getIntExtra(CHAPTER, 0);
 
-        //setTitle("Chapter " + chapterNumber);
-
+        TextView title = findViewById(R.id.title);
+        title.setText("Chapter " + chapterNumber);
         ImageView next = findViewById(R.id.next);
         next.setOnClickListener(this);
         ImageView previous = findViewById(R.id.previous);
