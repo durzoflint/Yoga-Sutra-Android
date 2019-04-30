@@ -66,6 +66,7 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/teach_me"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -73,6 +74,7 @@
             android:text="Teach Me" />
 
         <Button
+            android:id="@+id/tell_me_more"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

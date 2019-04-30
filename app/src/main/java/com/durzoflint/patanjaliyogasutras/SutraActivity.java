@@ -1,9 +1,12 @@
 package com.durzoflint.patanjaliyogasutras;
 
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +24,8 @@ public class SutraActivity extends AppCompatActivity implements View.OnClickList
     JSONArray chapter;
     int chapterNumber, verseNumber, chapterLength;
     TextView one, two, three;
+    MediaPlayer player;
+    ImageView playPause;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +40,12 @@ public class SutraActivity extends AppCompatActivity implements View.OnClickList
         next.setOnClickListener(this);
         ImageView previous = findViewById(R.id.previous);
         previous.setOnClickListener(this);
-        ImageView playPause = findViewById(R.id.play_pause);
+        playPause = findViewById(R.id.play_pause);
         playPause.setOnClickListener(this);
+        Button teachMe = findViewById(R.id.teach_me);
+        teachMe.setOnClickListener(this);
+        Button tellMeMore = findViewById(R.id.tell_me_more);
+        tellMeMore.setOnClickListener(this);
 
         one = findViewById(R.id.one);
         two = findViewById(R.id.two);
@@ -47,6 +56,14 @@ public class SutraActivity extends AppCompatActivity implements View.OnClickList
     }
 
     void attachView() {
+        if (player != null) {
+            if (player.isPlaying()) {
+                player.stop();
+                player.release();
+                player = null;
+                playPause.setImageDrawable(getDrawable(android.R.drawable.ic_media_play));
+            }
+        }
         try {
             JSONObject verse = chapter.getJSONObject(verseNumber);
 
@@ -56,6 +73,44 @@ public class SutraActivity extends AppCompatActivity implements View.OnClickList
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("SutraActivity", e.getMessage());
+        }
+    }
+
+    void play(String name) {
+        if (player != null) {
+            if (player.isPlaying()) {
+                player.stop();
+                player.release();
+                player = null;
+                playPause.setImageDrawable(getDrawable(android.R.drawable.ic_media_play));
+                return;
+            }
+        }
+        AssetFileDescriptor assetFileDescriptor;
+        try {
+            assetFileDescriptor = getAssets().openFd(name);
+            if (player != null) {
+                if (player.isPlaying()) {
+                    player.stop();
+                    player.release();
+                    player = null;
+                    playPause.setImageDrawable(getDrawable(android.R.drawable.ic_media_play));
+                }
+            }
+            player = new MediaPlayer();
+            player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    playPause.setImageDrawable(getDrawable(android.R.drawable.ic_media_play));
+                }
+            });
+            player.setDataSource(assetFileDescriptor.getFileDescriptor(),
+                    assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
+            player.prepare();
+            player.start();
+            playPause.setImageDrawable(getDrawable(android.R.drawable.ic_media_pause));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -106,6 +161,12 @@ public class SutraActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.play_pause:
+                play(chapterNumber + "." + (verseNumber + 1) + " C.mp3");
+                break;
+            case R.id.teach_me:
+                play(chapterNumber + "." + (verseNumber + 1) + " A.mp3");
+                break;
+            case R.id.tell_me_more:
                 break;
         }
     }
